@@ -5,8 +5,10 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path"
+	"strings"
 
-	"github.com/tealeg/xlsx"
+	"github.com/zxfonline/xlsx"
 )
 
 var xlsxPath = flag.String("o", "", "Path to the XLSX output file")
@@ -33,7 +35,14 @@ func generateXLSXFromCSV(csvPath string, XLSXPath string, delimiter string) erro
 		reader.Comma = rune(';')
 	}
 	xlsxFile := xlsx.NewFile()
-	sheet, err := xlsxFile.AddSheet(csvPath)
+
+	_, fn := path.Split(csvPath)
+	ext := path.Ext(fn)
+	if ext != "" {
+		fn = strings.Split(fn, ext)[0]
+	}
+
+	sheet, err := xlsxFile.AddSheet(fn)
 	if err != nil {
 		return err
 	}
@@ -61,7 +70,6 @@ func main() {
 	flag.Parse()
 	err := generateXLSXFromCSV(*csvPath, *xlsxPath, *delimiter)
 	if err != nil {
-		fmt.Printf(err.Error())
-		return
+		panic(err)
 	}
 }
