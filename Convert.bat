@@ -1,2 +1,2 @@
-csv2xlsx.exe -f "./CORRECTION_tanslate.csv" -o "./CORRECTION_tanslate.xlsx" -d ","
+csv2xlsx.exe -f "./testfile.csv" -o "./testfile.xlsx" -d ","
 pause
