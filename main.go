@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"path"
 	"strings"
@@ -55,7 +56,7 @@ func generateXLSXFromCSV(csvPath string, XLSXPath string, delimiter string) erro
 		}
 		fields, err = reader.Read()
 	}
-	if err != nil {
+	if err != nil && err != io.EOF {
 		fmt.Printf(err.Error())
 	}
 	return xlsxFile.Save(XLSXPath)
