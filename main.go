@@ -9,12 +9,15 @@ import (
 	"path"
 	"strings"
 
+	"path/filepath"
+
+	"github.com/zxfonline/fileutil"
 	"github.com/zxfonline/xlsx"
 )
 
 var xlsxPath = flag.String("o", "", "Path to the XLSX output file")
 var csvPath = flag.String("f", "", "Path to the CSV input file")
-var delimiter = flag.String("d", ";", "Delimiter for felds in the CSV input.")
+var delimiter = flag.String("d", ",", "Delimiter for felds in the CSV input.")
 
 func usage() {
 	fmt.Printf(`%s: -f=<CSV Input File> -o=<XLSX Output File> -d=<Delimiter>
@@ -23,7 +26,8 @@ func usage() {
 		os.Args[0])
 }
 
-func generateXLSXFromCSV(csvPath string, XLSXPath string, delimiter string) error {
+func generateCSVFromXLSX(csvPath string, XLSXPath string, delimiter string) error {
+	csvPath = filepath.ToSlash(csvPath)
 	csvFile, err := os.Open(csvPath)
 	if err != nil {
 		return err
@@ -33,7 +37,7 @@ func generateXLSXFromCSV(csvPath string, XLSXPath string, delimiter string) erro
 	if len(delimiter) > 0 {
 		reader.Comma = rune(delimiter[0])
 	} else {
-		reader.Comma = rune(';')
+		reader.Comma = rune(',')
 	}
 	xlsxFile := xlsx.NewFile()
 
@@ -64,12 +68,18 @@ func generateXLSXFromCSV(csvPath string, XLSXPath string, delimiter string) erro
 
 func main() {
 	flag.Parse()
-	if len(os.Args) < 3 {
-		usage()
-		return
+	if *csvPath == "" {
+		if len(os.Args) < 3 {
+			usage()
+			return
+		}
+		flag.Parse()
 	}
-	flag.Parse()
-	err := generateXLSXFromCSV(*csvPath, *xlsxPath, *delimiter)
+	if *xlsxPath == "" {
+		*xlsxPath = fileutil.ChangeFileExt(*csvPath, ".xlsx")
+
+	}
+	err := generateCSVFromXLSX(*csvPath, *xlsxPath, *delimiter)
 	if err != nil {
 		panic(err)
 	}
