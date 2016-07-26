@@ -9,10 +9,8 @@ import (
 	"path"
 	"strings"
 
-	"path/filepath"
-
+	"github.com/tealeg/xlsx"
 	"github.com/zxfonline/fileutil"
-	"github.com/zxfonline/xlsx"
 )
 
 var xlsxPath = flag.String("o", "", "Path to the XLSX output file")
@@ -27,7 +25,7 @@ func usage() {
 }
 
 func generateCSVFromXLSX(csvPath string, XLSXPath string, delimiter string) error {
-	csvPath = filepath.ToSlash(csvPath)
+	csvPath = strings.Replace(csvPath, "\\", "/", -1)
 	csvFile, err := os.Open(csvPath)
 	if err != nil {
 		return err
