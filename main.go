@@ -11,6 +11,7 @@ import (
 	"io"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/tealeg/xlsx"
@@ -43,7 +44,7 @@ func generateCSVFromXLSX(csvPath string, XLSXPath string, delimiter string) erro
 	}
 	xlsxFile := xlsx.NewFile()
 
-	_, fn := path.Split(csvPath)
+	_, fn := filepath.Split(csvPath)
 	ext := path.Ext(fn)
 	if ext != "" {
 		fn = strings.Split(fn, ext)[0]
